@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>First e Follow: FIRST, FOLLOW, LL(1) e SLR(1)</title>
+  <meta name="description" content="Calcule FIRST, FOLLOW e as tabelas LL(1) e SLR(1) de qualquer gramática, elimine recursão à esquerda, fatore e acompanhe a análise passo a passo com a árvore sintática. Tudo no navegador.">
+  <meta name="theme-color" content="#0f766e">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌳</text></svg>">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>First e Follow</h1>
+    <p class="lead">Calcule FIRST, FOLLOW e as tabelas LL(1) e SLR(1) de qualquer gramática, com a análise passo a passo e a árvore sintática.</p>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="t-gramatica">
+      <h2 id="t-gramatica">Gramática</h2>
+      <div class="exemplos" id="exemplos" role="group" aria-label="Gramáticas de exemplo"></div>
+      <label for="gramatica">Uma regra por linha, no formato <code>A -&gt; α | β</code></label>
+      <textarea id="gramatica" rows="8" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="notacao"></textarea>
+      <p id="notacao" class="muted small">Também valem <code>::=</code> e <code>→</code>. O vazio pode ser <code>ε</code>, <code>eps</code> ou <code>&amp;</code>. Separe os símbolos com espaços; os não terminais são os lados esquerdos e o primeiro é o inicial. Terminais especiais vão entre aspas, como <code>'|'</code>.</p>
+      <div class="acoes">
+        <button type="button" class="btn secondary" id="copiar-link">Copiar link</button>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <div id="resumo" aria-live="polite"></div>
+    </section>
+
+    <section class="card" aria-labelledby="t-conjuntos">
+      <h2 id="t-conjuntos">FIRST e FOLLOW</h2>
+      <div class="table-wrap"><table id="conjuntos" class="tabela"></table></div>
+      <details class="explica">
+        <summary>Como esses conjuntos são calculados</summary>
+        <ul>
+          <li><strong>Anulável</strong>: o não terminal deriva a cadeia vazia (ε).</li>
+          <li><strong>FIRST(A)</strong>: terminais que podem começar uma cadeia derivada de A; inclui ε se A é anulável. Para A → X1 X2 ..., entra FIRST(X1) e, enquanto os X forem anuláveis, também FIRST do seguinte.</li>
+          <li><strong>FOLLOW(A)</strong>: terminais que podem aparecer logo depois de A. O inicial recebe $. Para cada B → α A β, FIRST(β) sem ε vai para FOLLOW(A); se β é anulável (ou vazio), FOLLOW(B) também vai.</li>
+          <li>Os três são calculados por <strong>ponto fixo</strong>: aplica as regras em todas as produções até nenhum conjunto mudar.</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="card" aria-labelledby="t-transformacoes">
+      <h2 id="t-transformacoes">Recursão à esquerda e fatoração</h2>
+      <div id="recursao" aria-live="polite"></div>
+      <div class="acoes">
+        <button type="button" class="btn" id="eliminar">Eliminar recursão à esquerda</button>
+        <button type="button" class="btn" id="fatorar">Fatorar à esquerda</button>
+      </div>
+      <div id="transformada" class="transformada" hidden>
+        <h3 id="transformada-titulo"></h3>
+        <pre id="transformada-texto" class="codigo"></pre>
+        <ol id="transformada-passos" class="passos"></ol>
+        <ul id="transformada-avisos" class="avisos"></ul>
+        <button type="button" class="btn" id="usar-transformada">Usar esta gramática</button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="t-ll1">
+      <h2 id="t-ll1">Tabela LL(1)</h2>
+      <p id="ll1-status" class="veredito" aria-live="polite"></p>
+      <div class="table-wrap"><table id="tabela-ll1" class="tabela tabela-analise"></table></div>
+    </section>
+
+    <section class="card" aria-labelledby="t-analise-ll1">
+      <h2 id="t-analise-ll1">Análise LL(1) passo a passo</h2>
+      <form id="form-ll1" class="linha-entrada">
+        <label for="entrada-ll1">Cadeia de entrada (terminais separados por espaço)</label>
+        <div class="campo">
+          <input id="entrada-ll1" type="text" spellcheck="false" autocomplete="off" autocapitalize="off">
+          <button type="submit" class="btn">Analisar</button>
+        </div>
+      </form>
+      <p id="ll1-resultado" class="resultado" aria-live="polite"></p>
+      <div class="table-wrap"><table id="traco-ll1" class="tabela traco"></table></div>
+      <div id="arvore-ll1" class="arvore"></div>
+    </section>
+
+    <section class="card" aria-labelledby="t-slr">
+      <h2 id="t-slr">SLR(1)</h2>
+      <p id="slr-status" class="veredito" aria-live="polite"></p>
+      <details class="explica" id="detalhes-itens">
+        <summary id="resumo-itens">Conjuntos de itens LR(0)</summary>
+        <div id="itens-lr0" class="estados"></div>
+      </details>
+      <div class="table-wrap"><table id="tabela-slr" class="tabela tabela-analise"></table></div>
+      <ol id="producoes-numeradas" class="producoes-numeradas" aria-label="Produções numeradas para as reduções"></ol>
+      <form id="form-slr" class="linha-entrada">
+        <label for="entrada-slr">Cadeia de entrada</label>
+        <div class="campo">
+          <input id="entrada-slr" type="text" spellcheck="false" autocomplete="off" autocapitalize="off">
+          <button type="submit" class="btn">Analisar</button>
+        </div>
+      </form>
+      <p id="slr-resultado" class="resultado" aria-live="polite"></p>
+      <div class="table-wrap"><table id="traco-slr" class="tabela traco"></table></div>
+      <div id="arvore-slr" class="arvore"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Tudo roda no seu navegador. Código aberto no <a href="https://github.com/micdog22/first-follow-ll1">GitHub</a> · Licença MIT</p>
+  </footer>
+</body>
+</html>

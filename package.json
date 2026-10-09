@@ -1,0 +1,11 @@
+{
+  "name": "first-follow-ll1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Calcule FIRST, FOLLOW e as tabelas LL(1) e SLR(1) de qualquer gramática, com análise passo a passo e árvore sintática.",
+  "type": "module",
+  "scripts": { "test": "node --test" },
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/micdog22/first-follow-ll1.git" },
+  "homepage": "https://micdog22.github.io/first-follow-ll1/"
+}
